@@ -1,11 +1,11 @@
 "use client"
 
 import Image from "next/image"
-import { X, Instagram, Music, Cloud, Loader2, ChevronDown } from 'lucide-react'
-import { FaSpotify, FaYoutube, FaTiktok, FaApple, FaInstagram, FaTwitter } from 'react-icons/fa'
-import { FaXTwitter } from "react-icons/fa6";
+import { Loader2, ChevronDown, Cloud, Music } from 'lucide-react'
+import { FaSpotify, FaYoutube, FaTiktok, FaApple, FaInstagram } from 'react-icons/fa'
+import { FaXTwitter } from "react-icons/fa6"
 import { Button } from "@/components/ui/button"
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState } from "react"
 import {
   Dialog,
   DialogContent,
@@ -13,12 +13,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
 
 const carouselImages = [
   "/asap-1.jpg",
@@ -87,17 +81,20 @@ const MODAL_SOCIAL_LINKS = [
   }
 ];
 
-const handleSocialClick = (url: string) => {
-  window.open(url, '_blank');
-};
-
 export default function MusicPromo() {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [audio] = useState(new Audio('/asap.mp3'));
+  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
   const [showPlayButton, setShowPlayButton] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+    const audioElement = new Audio('/asap.mp3');
+    setAudio(audioElement);
+    setShowPlayButton(true);
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -108,52 +105,46 @@ export default function MusicPromo() {
   }, []);
 
   useEffect(() => {
-    const playPromise = audio.play();
-
+    const playPromise = audio?.play();
     if (playPromise !== undefined) {
       playPromise.catch(() => {
         setShowPlayButton(true);
       });
     }
 
-    // Cleanup on unmount
     return () => {
-      audio.pause();
-      audio.currentTime = 0;
+      if (audio) {
+        audio.pause();
+        audio.currentTime = 0;
+      }
     };
   }, [audio]);
 
   useEffect(() => {
-    const audioElement = new Audio();
-    audioElement.src = '/asap.mp3';
-    audioElement.addEventListener('error', (e) => {
-      console.error('Audio error:', e);
-    });
-
-    // Log to verify the audio is loading
-    console.log('Audio status:', audioElement.readyState);
-  }, []);
-
-  useEffect(() => {
-    // Add event listener for when song ends
-    audio.addEventListener('ended', () => {
+    audio?.addEventListener('ended', () => {
       setIsPlaying(false);
       setIsFinished(true);
     });
 
     return () => {
-      audio.removeEventListener('ended', () => {
+      audio?.removeEventListener('ended', () => {
         setIsPlaying(false);
         setIsFinished(true);
       });
-      audio.pause();
-      audio.currentTime = 0;
+      if (audio) {
+        audio.pause();
+        audio.currentTime = 0;
+      }
     };
   }, [audio]);
 
+  if (!isMounted) {
+    return null;
+  }
+
   const handlePlay = () => {
     setIsPlaying(true);
-    audio.play().catch(e => {
+    audio?.play().catch(e => {
       console.error('Play failed:', e);
       setIsPlaying(false);
     });
@@ -172,9 +163,8 @@ export default function MusicPromo() {
             <Image
               src="/mask-group.png"
               alt="Background pattern"
-              layout="fill"
-              objectFit="cover"
-              quality={100}
+              width={596}
+              height={200}
               className="w-full object-cover"
             />
           </div>
@@ -308,20 +298,15 @@ export default function MusicPromo() {
                   src={image}
                   alt={`ASAP promo image ${index + 1}`}
                   fill
-                  priority
+                  priority={index === 0}
                   quality={100}
-                  sizes="(max-width: 768px) 100vw, 596px"
                   className="w-full h-full object-cover rounded-none lg:rounded-lg"
                   style={{
-                    objectPosition: 'top center',
-                    transform: 'translate3d(0, 0, 0)',
-                    backfaceVisibility: 'hidden',
-                    WebkitBackfaceVisibility: 'hidden',
-                    MozBackfaceVisibility: 'hidden',
-                    imageRendering: '-webkit-optimize-contrast'
+                    objectPosition: 'center top',
+                    imageRendering: 'auto'
                   }}
                 />
-                <div className="absolute inset-0 bg-black/40 lg:bg-black/70 rounded-none lg:rounded-lg" />
+                <div className="absolute inset-0 bg-black/50 lg:bg-black/70 rounded-none lg:rounded-lg" />
               </div>
             ))}
           </div>
@@ -347,7 +332,7 @@ export default function MusicPromo() {
             </>
           ) : isFinished ? (
             <span className="text-xs sm:text-sm">
-              I know you can't wait to hear ASAP, Pre Save now
+              I know you can&apos;t wait to hear ASAP, Pre Save now
             </span>
           ) : (
             <>
