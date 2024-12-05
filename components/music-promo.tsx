@@ -151,10 +151,10 @@ export default function MusicPromo() {
   };
 
   return (
-    <div className="fixed inset-0 bg-black text-white overflow-y-auto min-h-screen lg:overflow-hidden lg:flex lg:items-center lg:justify-center">
+    <div className="fixed inset-0 bg-black text-white overflow-y-auto min-h-screen lg:overflow-hidden lg:flex lg:items-center lg:justify-center animate-fadeIn">
       <div className="w-full max-w-[1200px] flex flex-col lg:flex-row lg:gap-8 p-4 lg:p-0 lg:h-[752px] pb-20 lg:pb-4">
         {/* Info Container */}
-        <div className="w-full lg:w-[596px] bg-[#1A1A1A] p-4 lg:p-8 rounded-none lg:rounded-lg shrink-0 flex flex-col justify-between relative overflow-hidden">
+        <div className="w-full lg:w-[596px] bg-[#1A1A1A] p-4 lg:p-8 rounded-none lg:rounded-lg shrink-0 flex flex-col justify-between relative overflow-hidden animate-slideUp">
           {/* Gradient overlay */}
           <div className="absolute bottom-0 left-0 right-0 h-[200px] bg-gradient-to-t from-[#2A2A2A] to-[#1A1A1A] pointer-events-none" />
 
@@ -191,11 +191,11 @@ export default function MusicPromo() {
               <div className="flex flex-col-reverse lg:flex-row items-start lg:items-center justify-between w-full lg:mb-16">
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button variant="outline" className="rounded-[4px] text-[#101010] text-[14px] lg:text-[16px] w-[156px] mt-4 lg:mt-0 mb-16 lg:mb-0">
+                    <Button variant="outline" className="rounded-[4px] text-[#101010] text-[14px] lg:text-[16px] w-[156px] mt-4 lg:mt-0 mb-16 lg:mb-0 transition-all duration-300 hover:scale-105 button-hover">
                       PreSave to listen
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="bg-[#1A1A1A] border-gray-800 w-[90%] sm:max-w-[425px] rounded-xl m-4">
+                  <DialogContent className="fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] bg-[#1A1A1A] border-gray-800 w-[90%] sm:max-w-[425px] rounded-xl">
                     <DialogHeader className="space-y-4">
                       <DialogTitle className="text-white text-2xl font-bold text-center">
                         Choose Your Platform
@@ -207,7 +207,7 @@ export default function MusicPromo() {
 
                     <div className="flex flex-col gap-3 mt-6">
                       <Button
-                        className="flex items-center gap-3 h-14 text-lg transition-all hover:scale-[1.02]"
+                        className="flex items-center gap-3 h-14 text-lg transition-all hover:scale-[1.02] button-hover"
                         onClick={() => window.open('https://spotify.com', '_blank')}
                         style={{ background: '#1DB954' }}
                       >
@@ -216,7 +216,7 @@ export default function MusicPromo() {
                       </Button>
 
                       <Button
-                        className="flex items-center gap-3 h-14 text-lg transition-all hover:scale-[1.02] bg-gradient-to-r from-pink-500 to-purple-500"
+                        className="flex items-center gap-3 h-14 text-lg transition-all hover:scale-[1.02] bg-gradient-to-r from-pink-500 to-purple-500 button-hover"
                         onClick={() => window.open('https://music.apple.com/us/album/asap-single/1781579654', '_blank')}
                       >
                         <FaApple className="w-6 h-6" />
@@ -225,7 +225,7 @@ export default function MusicPromo() {
 
                       <Button
                         variant="outline"
-                        className="flex items-center gap-3 h-14 text-lg border-gray-700 hover:bg-gray-800 transition-all hover:scale-[1.02]"
+                        className="flex items-center gap-3 h-14 text-lg border-gray-700 hover:bg-gray-800 transition-all hover:scale-[1.02] button-hover"
                         onClick={() => window.open('https://soundcloud.com/meekturna?utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing', '_blank')}
                       >
                         <Cloud className="w-6 h-6" />
@@ -275,7 +275,7 @@ export default function MusicPromo() {
                     href={social.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-white hover:text-gray-400 transition-colors"
+                    className="text-white transition-all duration-300 hover:text-gray-400 hover:scale-110 transform"
                   >
                     <Icon className="w-6 h-6" />
                   </a>
@@ -291,7 +291,7 @@ export default function MusicPromo() {
             {carouselImages.map((image, index) => (
               <div
                 key={index}
-                className={`absolute w-full h-full transition-opacity duration-500 ${index === currentIndex ? "opacity-100" : "opacity-0"
+                className={`absolute w-full h-full transition-all duration-700 ease-in-out ${index === currentIndex ? "opacity-100 scale-100" : "opacity-0 scale-95"
                   }`}
               >
                 <Image
@@ -306,7 +306,7 @@ export default function MusicPromo() {
                     imageRendering: 'auto'
                   }}
                 />
-                <div className="absolute inset-0 bg-black/50 lg:bg-black/70 rounded-none lg:rounded-lg" />
+                <div className="absolute inset-0 bg-black/60 lg:bg-black/70 rounded-none lg:rounded-lg" />
               </div>
             ))}
           </div>
@@ -322,7 +322,7 @@ export default function MusicPromo() {
       {showPlayButton && (
         <Button
           onClick={handlePlay}
-          className="fixed top-4 right-4 bg-white/10 hover:bg-white/20 flex items-center gap-2 text-sm lg:text-base"
+          className="fixed top-4 right-4 bg-white/10 hover:bg-white/20 flex items-center gap-2 text-sm lg:text-base button-hover"
           disabled={isPlaying}
         >
           {isPlaying ? (
