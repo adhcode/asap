@@ -40,11 +40,11 @@ const PAGE_SOCIAL_LINKS = [
   },
   {
     icon: FaSpotify,
-    url: 'https://open.spotify.com/artist/yourid',
+    url: 'https://open.spotify.com/artist/6lXdinu2W0JE2i7pxVJ1DP?si=QF6zRHlERdGbPyimRRUvVQ&nd=1&dlsi=242ab1e334ec431f',
   },
   {
     icon: FaApple,
-    url: 'https://music.apple.com/us/album/asap-single/1781579654',
+    url: 'https://music.apple.com/album/asap-single/1781579654',
   },
   {
     icon: Cloud,
@@ -92,8 +92,29 @@ export default function MusicPromo() {
   useEffect(() => {
     setIsMounted(true);
     const audioElement = new Audio('/asap.mp3');
+    audioElement.preload = 'auto';
     setAudio(audioElement);
-    setShowPlayButton(true);
+
+    // Attempt to play the audio when the user interacts
+    const handleUserInteraction = () => {
+      audioElement.play().then(() => {
+        setIsPlaying(true);
+        setShowPlayButton(false);
+      }).catch((error) => {
+        console.error('Play failed:', error);
+      });
+    };
+
+    // Add event listeners for user interaction
+    window.addEventListener('click', handleUserInteraction, { once: true });
+    window.addEventListener('touchstart', handleUserInteraction, { once: true });
+
+    return () => {
+      audioElement.pause();
+      audioElement.currentTime = 0;
+      window.removeEventListener('click', handleUserInteraction);
+      window.removeEventListener('touchstart', handleUserInteraction);
+    };
   }, []);
 
   useEffect(() => {
@@ -208,7 +229,7 @@ export default function MusicPromo() {
                     <div className="flex flex-col gap-3 mt-6">
                       <Button
                         className="flex items-center gap-3 h-14 text-lg transition-all hover:scale-[1.02] button-hover"
-                        onClick={() => window.open('https://spotify.com', '_blank')}
+                        onClick={() => window.open('https://open.spotify.com/artist/6lXdinu2W0JE2i7pxVJ1DP?si=QF6zRHlERdGbPyimRRUvVQ&nd=1&dlsi=242ab1e334ec431f', '_blank')}
                         style={{ background: '#1DB954' }}
                       >
                         <FaSpotify className="w-6 h-6" />
@@ -217,7 +238,7 @@ export default function MusicPromo() {
 
                       <Button
                         className="flex items-center gap-3 h-14 text-lg transition-all hover:scale-[1.02] bg-gradient-to-r from-pink-500 to-purple-500 button-hover"
-                        onClick={() => window.open('https://music.apple.com/us/album/asap-single/1781579654', '_blank')}
+                        onClick={() => window.open('https://music.apple.com/album/asap-single/1781579654', '_blank')}
                       >
                         <FaApple className="w-6 h-6" />
                         Presave on Apple Music
@@ -322,22 +343,22 @@ export default function MusicPromo() {
       {showPlayButton && (
         <Button
           onClick={handlePlay}
-          className="fixed top-4 right-4 bg-white/10 hover:bg-white/20 flex items-center gap-2 text-sm lg:text-base button-hover"
+          className="fixed top-4 right-4 bg-black/80 hover:bg-black/90 flex items-center gap-2 text-sm lg:text-base button-hover max-w-[200px] sm:max-w-none"
           disabled={isPlaying}
         >
           {isPlaying ? (
             <>
               <Loader2 className="h-4 w-4 animate-spin" />
-              Playing...
+              <span className="text-yellow-400">Playing...</span>
             </>
           ) : isFinished ? (
-            <span className="text-xs sm:text-sm">
+            <span className="text-xs sm:text-sm block text-yellow-400 whitespace-normal">
               I know you can&apos;t wait to hear ASAP, Pre Save now
             </span>
           ) : (
             <>
               <Music className="h-4 w-4" />
-              Play Music
+              <span className="text-yellow-400">Play Music</span>
             </>
           )}
         </Button>
