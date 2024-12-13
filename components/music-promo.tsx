@@ -1,18 +1,11 @@
 "use client"
 
 import Image from "next/image"
-import { Loader2, ChevronDown, Cloud, Music, Share2 } from 'lucide-react'
+import { ChevronDown, Cloud, Share2 } from 'lucide-react'
 import { FaSpotify, FaYoutube, FaTiktok, FaApple, FaInstagram } from 'react-icons/fa'
 import { FaXTwitter } from "react-icons/fa6"
 import { Button } from "@/components/ui/button"
 import { useEffect, useState } from "react"
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
 import { motion } from "framer-motion";
 
 const carouselImages = [
@@ -53,40 +46,9 @@ const PAGE_SOCIAL_LINKS = [
   }
 ];
 
-const MODAL_SOCIAL_LINKS = [
-  {
-    icon: FaInstagram,
-    url: 'https://www.instagram.com/meekturna1?igsh=aW1ma2h1bjRyaXZt&utm_source=qr',
-    hoverColor: 'hover:text-pink-500',
-    label: 'Instagram'
-  },
-  {
-    icon: FaXTwitter,
-    url: 'https://x.com/meekturna',
-    hoverColor: 'hover:text-blue-500',
-    label: 'Twitter'
-  },
-
-
-  {
-    icon: FaTiktok,
-    url: 'https://www.tiktok.com/@meekturna?_t=8rxrMZGgePv&_r=1',
-    hoverColor: 'hover:text-purple-500',
-    label: 'TikTok'
-  },
-  {
-    icon: FaYoutube,
-    url: 'https://www.youtube.com/@meekturna/',
-    hoverColor: 'hover:text-red-500',
-    label: 'YouTube'
-  }
-];
-
 export default function MusicPromo() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isFinished, setIsFinished] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -98,7 +60,6 @@ export default function MusicPromo() {
     // Attempt to play the audio when the user interacts
     const handleUserInteraction = () => {
       audioElement.play().then(() => {
-        setIsPlaying(true);
       }).catch((error) => {
         console.error('Play failed:', error);
       });
@@ -141,14 +102,10 @@ export default function MusicPromo() {
 
   useEffect(() => {
     audio?.addEventListener('ended', () => {
-      setIsPlaying(false);
-      setIsFinished(true);
     });
 
     return () => {
       audio?.removeEventListener('ended', () => {
-        setIsPlaying(false);
-        setIsFinished(true);
       });
       if (audio) {
         audio.pause();
