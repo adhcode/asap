@@ -1,12 +1,13 @@
 "use client"
 
 import Image from "next/image"
-import { ChevronDown, Cloud, Share2 } from 'lucide-react'
-import { FaSpotify, FaYoutube, FaTiktok, FaApple, FaInstagram } from 'react-icons/fa'
+import { ChevronDown, Share2 } from 'lucide-react'
+import { FaSpotify, FaYoutube, FaTiktok, FaApple, FaInstagram, FaCloud } from 'react-icons/fa'
 import { FaXTwitter } from "react-icons/fa6"
 import { Button } from "@/components/ui/button"
-import { useEffect, useState } from "react"
+import { useEffect, useState, memo } from "react"
 import { motion } from "framer-motion";
+import { IconType } from 'react-icons';
 
 const carouselImages = [
   "/asap-1.jpg",
@@ -15,7 +16,12 @@ const carouselImages = [
 
 ];
 
-const PAGE_SOCIAL_LINKS = [
+interface SocialLink {
+  icon: IconType;
+  url: string;
+}
+
+const PAGE_SOCIAL_LINKS: SocialLink[] = [
   {
     icon: FaXTwitter,
     url: 'https://x.com/meekturna',
@@ -41,15 +47,69 @@ const PAGE_SOCIAL_LINKS = [
     url: 'https://music.apple.com/album/asap-single/1781579654',
   },
   {
-    icon: Cloud,
+    icon: FaCloud,
     url: 'https://soundcloud.com/meekturna?utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing',
   }
 ];
+
+// Update the share functionality to use the main website URL
+const MAIN_WEBSITE_URL = 'https://www.asap.uvise.media';
+const STREAM_URL = 'https://www.submithub.com/link/meekturna-asap';
+
+const CarouselImage = memo(({ image, index, currentIndex }: {
+  image: string;
+  index: number;
+  currentIndex: number;
+}) => (
+  <div
+    className={`absolute w-full h-full transition-all duration-700 ease-in-out ${index === currentIndex ? "opacity-100 scale-100" : "opacity-0 scale-95"
+      }`}
+  >
+    <Image
+      src={image}
+      alt={`ASAP promo image ${index + 1}`}
+      fill
+      priority={index === 0}
+      quality={100}
+      className="w-full h-full object-cover rounded-none lg:rounded-lg"
+      style={{
+        objectPosition: 'center top',
+        imageRendering: 'auto'
+      }}
+    />
+    <div className="absolute inset-0 bg-black/80 lg:bg-black/70 rounded-none lg:rounded-lg" />
+  </div>
+));
+CarouselImage.displayName = 'CarouselImage';
 
 export default function MusicPromo() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
   const [isMounted, setIsMounted] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleStreamClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsModalOpen(true);
+  };
+
+  const handleShare = async () => {
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: 'MEEKTURNA - ASAP',
+          text: '🔥 Check out this hot new track ASAP by MEEKTURNA',
+          url: MAIN_WEBSITE_URL
+        });
+      } else {
+        // Fallback for browsers that don't support Web Share API
+        navigator.clipboard.writeText(MAIN_WEBSITE_URL);
+        alert('Link copied to clipboard!');
+      }
+    } catch (error) {
+      console.error('Error sharing:', error);
+    }
+  };
 
   useEffect(() => {
     setIsMounted(true);
@@ -88,7 +148,8 @@ export default function MusicPromo() {
   useEffect(() => {
     const playPromise = audio?.play();
     if (playPromise !== undefined) {
-      playPromise.catch(() => {
+      playPromise.catch((error) => {
+        console.error('Audio playback failed:', error);
       });
     }
 
@@ -101,12 +162,17 @@ export default function MusicPromo() {
   }, [audio]);
 
   useEffect(() => {
-    audio?.addEventListener('ended', () => {
-    });
+    const handleEnded = () => {
+      // Add your ended logic here if needed
+      if (audio) {
+        audio.currentTime = 0;
+      }
+    };
+
+    audio?.addEventListener('ended', handleEnded);
 
     return () => {
-      audio?.removeEventListener('ended', () => {
-      });
+      audio?.removeEventListener('ended', handleEnded);
       if (audio) {
         audio.pause();
         audio.currentTime = 0;
@@ -174,7 +240,7 @@ export default function MusicPromo() {
                     bg-gradient-to-r from-white to-gray-100 font-[600] tracking-wide
                     transform hover:-translate-y-1 font-golos"
                     style={{ fontFamily: 'var(--font-golos)' }}
-                    onClick={() => window.open('https://www.submithub.com/link/meekturna-asap', '_blank')}
+                    onClick={handleStreamClick}
                   >
                     Listen Now
                   </Button>
@@ -191,13 +257,7 @@ export default function MusicPromo() {
                     justify-center gap-3 py-5 w-full lg:w-[200px] border border-white/10
                     hover:bg-white/10 transition-all duration-300 hover:scale-105
                     transform hover:-translate-y-1 group font-golos"
-                    onClick={() => {
-                      navigator.share({
-                        title: 'MEEKTURNA - ASAP',
-                        text: '🔥 Check out this hot new track ASAP by MEEKTURNA',
-                        url: 'https://www.submithub.com/link/meekturna-asap'
-                      }).catch(console.error)
-                    }}
+                    onClick={handleShare}
                   >
                     <Share2 className="w-4 h-4 group-hover:rotate-12 transition-transform duration-300" />
                     <span className="group-hover:tracking-wide transition-all duration-300">
@@ -214,25 +274,12 @@ export default function MusicPromo() {
         <div className="w-full lg:w-[596px] h-[446.26px] lg:h-[752px] bg-[#7E1717] rounded-none lg:rounded-lg shrink-0 relative">
           <div className="w-full h-full relative">
             {carouselImages.map((image, index) => (
-              <div
+              <CarouselImage
                 key={index}
-                className={`absolute w-full h-full transition-all duration-700 ease-in-out ${index === currentIndex ? "opacity-100 scale-100" : "opacity-0 scale-95"
-                  }`}
-              >
-                <Image
-                  src={image}
-                  alt={`ASAP promo image ${index + 1}`}
-                  fill
-                  priority={index === 0}
-                  quality={100}
-                  className="w-full h-full object-cover rounded-none lg:rounded-lg"
-                  style={{
-                    objectPosition: 'center top',
-                    imageRendering: 'auto'
-                  }}
-                />
-                <div className="absolute inset-0 bg-black/80 lg:bg-black/70 rounded-none lg:rounded-lg" />
-              </div>
+                image={image}
+                index={index}
+                currentIndex={currentIndex}
+              />
             ))}
           </div>
 
@@ -275,6 +322,24 @@ export default function MusicPromo() {
       <div className="fixed bottom-4 left-0 right-0 flex justify-center lg:hidden">
         <ChevronDown className="w-8 h-8 text-white animate-bounce" />
       </div>
+
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+          <div className="relative w-[450px] h-[600px] bg-white rounded-lg">
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="absolute -top-10 right-0 text-white hover:text-gray-300"
+            >
+              Close
+            </button>
+            <iframe
+              src={STREAM_URL}
+              className="w-full h-full rounded-lg"
+              allow="autoplay"
+            />
+          </div>
+        </div>
+      )}
     </div>
   )
 }

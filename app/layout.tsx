@@ -23,6 +23,14 @@ const golos = Golos_Text({
 export const metadata: Metadata = {
   title: "ASAP",
   description: "ASAP BY MEEKTURNA",
+  icons: {
+    icon: [
+      { url: '/favicon-32x32.png', type: 'image/png', sizes: '32x32' }
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png' }
+    ],
+  }
 };
 
 export default function RootLayout({
@@ -32,6 +40,23 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${golos.variable}`}>
+      <head>
+        <link
+          rel="icon"
+          href="/favicon.ico"
+          sizes="any"
+        />
+        <link
+          rel="icon"
+          href="/icon.png"
+          type="image/png"
+          sizes="32x32"
+        />
+        <link
+          rel="apple-touch-icon"
+          href="/apple-touch-icon.png"
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${golos.className} antialiased`}
       >
