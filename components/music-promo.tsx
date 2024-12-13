@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { Loader2, ChevronDown, Cloud, Music } from 'lucide-react'
+import { Loader2, ChevronDown, Cloud, Music, Share2 } from 'lucide-react'
 import { FaSpotify, FaYoutube, FaTiktok, FaApple, FaInstagram } from 'react-icons/fa'
 import { FaXTwitter } from "react-icons/fa6"
 import { Button } from "@/components/ui/button"
@@ -13,6 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { motion } from "framer-motion";
 
 const carouselImages = [
   "/asap-1.jpg",
@@ -84,10 +85,10 @@ const MODAL_SOCIAL_LINKS = [
 export default function MusicPromo() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
-  const [showPlayButton, setShowPlayButton] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [scrollPosition, setScrollPosition] = useState(0);
 
   useEffect(() => {
     setIsMounted(true);
@@ -99,7 +100,6 @@ export default function MusicPromo() {
     const handleUserInteraction = () => {
       audioElement.play().then(() => {
         setIsPlaying(true);
-        setShowPlayButton(false);
       }).catch((error) => {
         console.error('Play failed:', error);
       });
@@ -129,7 +129,6 @@ export default function MusicPromo() {
     const playPromise = audio?.play();
     if (playPromise !== undefined) {
       playPromise.catch(() => {
-        setShowPlayButton(true);
       });
     }
 
@@ -159,23 +158,24 @@ export default function MusicPromo() {
     };
   }, [audio]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollPosition(window.scrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   if (!isMounted) {
     return null;
   }
-
-  const handlePlay = () => {
-    setIsPlaying(true);
-    audio?.play().catch(e => {
-      console.error('Play failed:', e);
-      setIsPlaying(false);
-    });
-  };
 
   return (
     <div className="fixed inset-0 bg-black text-white overflow-y-auto min-h-screen lg:overflow-hidden lg:flex lg:items-center lg:justify-center animate-fadeIn">
       <div className="w-full max-w-[1200px] flex flex-col lg:flex-row lg:gap-8 p-4 lg:p-0 lg:h-[752px] pb-20 lg:pb-4">
         {/* Info Container */}
-        <div className="w-full lg:w-[596px] bg-[#1A1A1A] p-4 lg:p-8 rounded-none lg:rounded-lg shrink-0 flex flex-col justify-between relative overflow-hidden animate-slideUp">
+        <div className="w-full lg:w-[596px] bg-[#1A1A1A] p-6 lg:p-8 rounded-none lg:rounded-lg shrink-0 flex flex-col justify-between relative overflow-hidden animate-slideUp">
           {/* Gradient overlay */}
           <div className="absolute bottom-0 left-0 right-0 h-[200px] bg-gradient-to-t from-[#2A2A2A] to-[#1A1A1A] pointer-events-none" />
 
@@ -194,120 +194,111 @@ export default function MusicPromo() {
           <div className="flex flex-col h-full justify-between">
             {/* Upper Content */}
             <div className="flex flex-col relative">
-              <h1 className="text-[14px] lg:text-[16px] font-[700] leading-[19.2px] text-[#FFFFFF] font-golos mb-16">
+              <h1 className="text-[14px] lg:text-[16px] font-[700] leading-[19.2px] text-[#FFFFFF] font-golos mb-8 lg:mb-16">
                 MEEKTURNA
               </h1>
-              <p className="text-[#7E7E7E] text-[32px] lg:text-[40px] font-[600] leading-[1.2] lg:leading-[48px] font-golos mb-12">
-                The Newest Single
+              <p className="text-[#7E7E7E] text-[28px] lg:text-[40px] font-[600] leading-[1.2] lg:leading-[48px] font-golos mb-8 lg:mb-12">
+                Stream The Hit Single
               </p>
-              <h2 className="text-[120px] lg:text-[160px] font-bold tracking-tighter leading-[0.8] mb-4 lg:mb-16"
+              <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7 }}
+                className="text-[100px] lg:text-[160px] font-bold tracking-tighter leading-[0.8] mb-4 lg:mb-16"
                 style={{
                   WebkitTextStroke: '2px white',
                   WebkitTextFillColor: 'transparent'
-                }}>
+                }}
+              >
                 ASAP
-              </h2>
+              </motion.div>
 
               {/* Button and Release Date */}
-              <div className="flex flex-col-reverse lg:flex-row items-start lg:items-center justify-between w-full lg:mb-16">
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button variant="outline" className="rounded-[4px] text-[#101010] text-[14px] lg:text-[16px] w-[156px] mt-4 lg:mt-0 mb-16 lg:mb-0 transition-all duration-300 hover:scale-105 button-hover">
-                      PreSave to listen
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] bg-[#1A1A1A] border-gray-800 w-[90%] sm:max-w-[425px] rounded-xl">
-                    <DialogHeader className="space-y-4">
-                      <DialogTitle className="text-white text-2xl font-bold text-center">
-                        Choose Your Platform
-                      </DialogTitle>
-                      <p className="text-gray-400 text-center text-sm">
-                        Pre-save ASAP now and be the first to listen when it drops
-                      </p>
-                    </DialogHeader>
-
-                    <div className="flex flex-col gap-3 mt-6">
-                      <Button
-                        className="flex items-center gap-3 h-14 text-lg transition-all hover:scale-[1.02] button-hover"
-                        onClick={() => window.open('https://open.spotify.com/artist/6lXdinu2W0JE2i7pxVJ1DP?si=QF6zRHlERdGbPyimRRUvVQ&nd=1&dlsi=242ab1e334ec431f', '_blank')}
-                        style={{ background: '#1DB954' }}
-                      >
-                        <FaSpotify className="w-6 h-6" />
-                        Presave on Spotify
-                      </Button>
-
-                      <Button
-                        className="flex items-center gap-3 h-14 text-lg transition-all hover:scale-[1.02] bg-gradient-to-r from-pink-500 to-purple-500 button-hover"
-                        onClick={() => window.open('https://music.apple.com/album/asap-single/1781579654', '_blank')}
-                      >
-                        <FaApple className="w-6 h-6" />
-                        Presave on Apple Music
-                      </Button>
-
-                      <Button
-                        variant="outline"
-                        className="flex items-center gap-3 h-14 text-lg border-gray-700 hover:bg-gray-800 transition-all hover:scale-[1.02] button-hover"
-                        onClick={() => window.open('https://soundcloud.com/meekturna?utm_source=clipboard&utm_medium=text&utm_campaign=social_sharing', '_blank')}
-                      >
-                        <Cloud className="w-6 h-6" />
-                        Follow on SoundCloud
-                      </Button>
-                    </div>
-
-                    <div className="mt-8 border-t border-gray-800 pt-6">
-                      <p className="text-gray-400 text-center text-sm mb-4">Follow on social media</p>
-                      <div className="flex justify-center gap-6">
-                        {MODAL_SOCIAL_LINKS.map((social) => {
-                          const Icon = social.icon;
-                          return (
-                            <a
-                              key={social.label}
-                              href={social.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className={`text-gray-400 ${social.hoverColor} transition-colors duration-300`}
-                              aria-label={social.label}
-                            >
-                              <Icon className="w-6 h-6" />
-                            </a>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    <div className="mt-6 text-center text-sm text-gray-500">
-                      Release Date: December 13, 2024
-                    </div>
-                  </DialogContent>
-                </Dialog>
-                <p className="text-[#FFFFFF] text-[14px] font-[400] leading-[1.5] text-left lg:text-right font-golos lg:w-[199px]">
-                  Coming out on all platform on December 13
-                </p>
-              </div>
-            </div>
-
-            {/* Social Icons */}
-            <div className="flex gap-6 relative z-10 mt-auto">
-              {PAGE_SOCIAL_LINKS.map((social, index) => {
-                const Icon = social.icon;
-                return (
-                  <a
-                    key={index}
-                    href={social.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-white transition-all duration-300 hover:text-gray-400 hover:scale-110 transform"
+              <div className="flex flex-col w-full lg:w-auto gap-6 mt-8 lg:mt-12">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <Button
+                    variant="outline"
+                    className="rounded-[4px] text-[#101010] text-[16px] w-full lg:w-[200px] py-6 lg:py-5 
+                    transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-white/10 
+                    bg-gradient-to-r from-white to-gray-100 font-bold tracking-wide
+                    transform hover:-translate-y-1"
+                    onClick={() => window.open('https://www.submithub.com/link/meekturna-asap', '_blank')}
                   >
-                    <Icon className="w-6 h-6" />
-                  </a>
-                );
-              })}
+                    Listen Now
+                  </Button>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                >
+                  <Button
+                    variant="ghost"
+                    className="text-white text-sm bg-black/50 backdrop-blur-sm flex items-center 
+                    justify-center gap-3 py-5 w-full lg:w-[200px] border border-white/10
+                    hover:bg-white/10 transition-all duration-300 hover:scale-105
+                    transform hover:-translate-y-1 group"
+                    onClick={() => {
+                      navigator.share({
+                        title: 'MEEKTURNA - ASAP',
+                        text: '🔥 Check out this hot new track ASAP by MEEKTURNA',
+                        url: 'https://www.submithub.com/link/meekturna-asap'
+                      }).catch(console.error)
+                    }}
+                  >
+                    <Share2 className="w-4 h-4 group-hover:rotate-12 transition-transform duration-300" />
+                    <span className="group-hover:tracking-wide transition-all duration-300">
+                      Share with Friends
+                    </span>
+                  </Button>
+                </motion.div>
+              </div>
+
+              {/* Social Proof */}
+
+
+              {/* Social Icons */}
+              <motion.div
+                className={`absolute bottom-8 left-0 right-0 flex justify-center gap-6 transition-opacity duration-500 ${scrollPosition > 100 ? 'opacity-100' : 'opacity-0'
+                  }`}
+                initial={{ y: 50, opacity: 0 }}
+                animate={{
+                  y: scrollPosition > 100 ? 0 : 50,
+                  opacity: scrollPosition > 100 ? 1 : 0
+                }}
+                transition={{ duration: 0.5 }}
+              >
+                {PAGE_SOCIAL_LINKS.map((social, index) => {
+                  const Icon = social.icon;
+                  return (
+                    <motion.a
+                      key={index}
+                      href={social.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-white hover:text-gray-300 transform hover:scale-110 transition-all duration-300"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      whileHover={{ y: -5 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <Icon className="w-8 h-8 drop-shadow-lg" />
+                    </motion.a>
+                  );
+                })}
+              </motion.div>
             </div>
           </div>
         </div>
 
         {/* Carousel Container */}
-        <div className="w-full lg:w-[596px] h-[446.26px] lg:h-[752px] bg-[#7E1717] rounded-none lg:rounded-lg shrink-0">
+        <div className="w-full lg:w-[596px] h-[446.26px] lg:h-[752px] bg-[#7E1717] rounded-none lg:rounded-lg shrink-0 relative">
           <div className="w-full h-full relative">
             {carouselImages.map((image, index) => (
               <div
@@ -327,9 +318,42 @@ export default function MusicPromo() {
                     imageRendering: 'auto'
                   }}
                 />
-                <div className="absolute inset-0 bg-black/60 lg:bg-black/70 rounded-none lg:rounded-lg" />
+                <div className="absolute inset-0 bg-black/80 lg:bg-black/70 rounded-none lg:rounded-lg" />
               </div>
             ))}
+          </div>
+
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/70 pointer-events-none" />
+
+          {/* Social Icons */}
+          <div className="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/80 to-transparent">
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              className="flex justify-center gap-6"
+            >
+              {PAGE_SOCIAL_LINKS.map((social, index) => {
+                const Icon = social.icon;
+                return (
+                  <motion.a
+                    key={index}
+                    href={social.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-white/90 hover:text-white transform hover:scale-110 transition-all duration-300"
+                    whileHover={{ y: -5 }}
+                    whileTap={{ scale: 0.95 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                  >
+                    <Icon className="w-6 h-6 drop-shadow-lg" />
+                  </motion.a>
+                );
+              })}
+            </motion.div>
           </div>
         </div>
       </div>
@@ -338,31 +362,6 @@ export default function MusicPromo() {
       <div className="fixed bottom-4 left-0 right-0 flex justify-center lg:hidden">
         <ChevronDown className="w-8 h-8 text-white animate-bounce" />
       </div>
-
-      {/* Play Button */}
-      {showPlayButton && (
-        <Button
-          onClick={handlePlay}
-          className="fixed top-4 right-4 bg-black/80 hover:bg-black/90 flex items-center gap-2 text-sm lg:text-base button-hover max-w-[200px] sm:max-w-none"
-          disabled={isPlaying}
-        >
-          {isPlaying ? (
-            <>
-              <Loader2 className="h-4 w-4 animate-spin" />
-              <span className="text-yellow-400">Playing...</span>
-            </>
-          ) : isFinished ? (
-            <span className="text-xs sm:text-sm block text-yellow-400 whitespace-normal">
-              I know you can&apos;t wait to hear ASAP, Pre Save now
-            </span>
-          ) : (
-            <>
-              <Music className="h-4 w-4" />
-              <span className="text-yellow-400">Play Music</span>
-            </>
-          )}
-        </Button>
-      )}
     </div>
   )
 }
