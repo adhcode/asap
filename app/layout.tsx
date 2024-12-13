@@ -17,7 +17,7 @@ const geistMono = localFont({
 
 const golos = Golos_Text({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
+  variable: '--font-golos',
 });
 
 export const metadata: Metadata = {
@@ -31,7 +31,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${golos.variable}`}>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${golos.className} antialiased`}
       >

@@ -88,7 +88,6 @@ export default function MusicPromo() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
-  const [scrollPosition, setScrollPosition] = useState(0);
 
   useEffect(() => {
     setIsMounted(true);
@@ -158,21 +157,12 @@ export default function MusicPromo() {
     };
   }, [audio]);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrollPosition(window.scrollY);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   if (!isMounted) {
     return null;
   }
 
   return (
-    <div className="fixed inset-0 bg-black text-white overflow-y-auto min-h-screen lg:overflow-hidden lg:flex lg:items-center lg:justify-center animate-fadeIn">
+    <div className="fixed inset-0 bg-black text-white overflow-y-auto min-h-screen lg:overflow-hidden lg:flex lg:items-center lg:justify-center animate-fadeIn font-golos">
       <div className="w-full max-w-[1200px] flex flex-col lg:flex-row lg:gap-8 p-4 lg:p-0 lg:h-[752px] pb-20 lg:pb-4">
         {/* Info Container */}
         <div className="w-full lg:w-[596px] bg-[#1A1A1A] p-6 lg:p-8 rounded-none lg:rounded-lg shrink-0 flex flex-col justify-between relative overflow-hidden animate-slideUp">
@@ -204,7 +194,7 @@ export default function MusicPromo() {
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7 }}
-                className="text-[100px] lg:text-[160px] font-bold tracking-tighter leading-[0.8] mb-4 lg:mb-16"
+                className="text-[120px] sm:text-[100px] md:text-[120px] lg:text-[160px] font-bold tracking-tighter leading-[0.8] mb-4 lg:mb-16 font-golos w-full"
                 style={{
                   WebkitTextStroke: '2px white',
                   WebkitTextFillColor: 'transparent'
@@ -224,8 +214,9 @@ export default function MusicPromo() {
                     variant="outline"
                     className="rounded-[4px] text-[#101010] text-[16px] w-full lg:w-[200px] py-6 lg:py-5 
                     transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-white/10 
-                    bg-gradient-to-r from-white to-gray-100 font-bold tracking-wide
-                    transform hover:-translate-y-1"
+                    bg-gradient-to-r from-white to-gray-100 font-[600] tracking-wide
+                    transform hover:-translate-y-1 font-golos"
+                    style={{ fontFamily: 'var(--font-golos)' }}
                     onClick={() => window.open('https://www.submithub.com/link/meekturna-asap', '_blank')}
                   >
                     Listen Now
@@ -242,7 +233,7 @@ export default function MusicPromo() {
                     className="text-white text-sm bg-black/50 backdrop-blur-sm flex items-center 
                     justify-center gap-3 py-5 w-full lg:w-[200px] border border-white/10
                     hover:bg-white/10 transition-all duration-300 hover:scale-105
-                    transform hover:-translate-y-1 group"
+                    transform hover:-translate-y-1 group font-golos"
                     onClick={() => {
                       navigator.share({
                         title: 'MEEKTURNA - ASAP',
@@ -258,41 +249,6 @@ export default function MusicPromo() {
                   </Button>
                 </motion.div>
               </div>
-
-              {/* Social Proof */}
-
-
-              {/* Social Icons */}
-              <motion.div
-                className={`absolute bottom-8 left-0 right-0 flex justify-center gap-6 transition-opacity duration-500 ${scrollPosition > 100 ? 'opacity-100' : 'opacity-0'
-                  }`}
-                initial={{ y: 50, opacity: 0 }}
-                animate={{
-                  y: scrollPosition > 100 ? 0 : 50,
-                  opacity: scrollPosition > 100 ? 1 : 0
-                }}
-                transition={{ duration: 0.5 }}
-              >
-                {PAGE_SOCIAL_LINKS.map((social, index) => {
-                  const Icon = social.icon;
-                  return (
-                    <motion.a
-                      key={index}
-                      href={social.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-white hover:text-gray-300 transform hover:scale-110 transition-all duration-300"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      whileHover={{ y: -5 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <Icon className="w-8 h-8 drop-shadow-lg" />
-                    </motion.a>
-                  );
-                })}
-              </motion.div>
             </div>
           </div>
         </div>
