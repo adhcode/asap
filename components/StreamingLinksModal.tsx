@@ -90,13 +90,13 @@ const StreamingLinksModal = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 font-golos"
+            className="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-2 sm:p-4 font-golos"
         >
             <motion.div
                 initial={{ scale: 0.95, y: 20 }}
                 animate={{ scale: 1, y: 0 }}
                 transition={{ type: "spring", duration: 0.5 }}
-                className="bg-[#1A1A1A] rounded-lg p-8 max-w-md w-full max-h-[90vh] overflow-y-auto border border-white/10 shadow-2xl relative 
+                className="bg-[#1A1A1A] rounded-lg p-4 sm:p-8 max-w-md w-full max-h-[90vh] overflow-y-auto border border-white/10 shadow-2xl relative 
                 scrollbar-none"
                 style={{
                     msOverflowStyle: 'none',
@@ -104,7 +104,7 @@ const StreamingLinksModal = ({
                 }}
             >
                 {/* Album Art and Title Section */}
-                <div className="flex flex-col items-center mb-8 relative">
+                <div className="flex flex-col items-center mb-6 sm:mb-8 relative">
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
@@ -112,10 +112,10 @@ const StreamingLinksModal = ({
                     >
                         <Image
                             src={coverArt}
-                            width={240}
-                            height={240}
+                            width={200}
+                            height={200}
                             alt="Album Cover"
-                            className="rounded-lg shadow-2xl mb-6 hover:shadow-white/10 transition-all duration-300"
+                            className="rounded-lg shadow-2xl mb-4 sm:mb-6 hover:shadow-white/10 transition-all duration-300 w-[180px] h-[180px] sm:w-[240px] sm:h-[240px]"
                         />
                     </motion.div>
 
@@ -123,25 +123,16 @@ const StreamingLinksModal = ({
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2 }}
-                        className="text-[14px] font-[700] text-white mb-2"
+                        className="text-[12px] sm:text-[14px] font-[700] text-white mb-2"
                     >
                         {artistName}
                     </motion.h2>
-
-                    <motion.p
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.3 }}
-                        className="text-[#7E7E7E] text-[28px] font-[600]"
-                    >
-
-                    </motion.p>
 
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.4 }}
-                        className="text-[80px] font-bold tracking-tighter leading-[0.8] mt-4"
+                        className="text-[60px] sm:text-[80px] font-bold tracking-tighter leading-[0.8] mt-4"
                         style={{
                             WebkitTextStroke: '2px white',
                             WebkitTextFillColor: 'transparent'
@@ -172,12 +163,12 @@ const StreamingLinksModal = ({
                 >
                     <Button
                         onClick={handleShare}
-                        className="w-full text-white text-sm bg-black/50 backdrop-blur-sm flex items-center 
-                        justify-center gap-3 py-5 border border-white/10 hover:bg-white/10 
+                        className="w-full text-white text-xs sm:text-sm bg-black/50 backdrop-blur-sm flex items-center 
+                        justify-center gap-2 sm:gap-3 py-4 sm:py-5 border border-white/10 hover:bg-white/10 
                         transition-all duration-300 hover:scale-105 transform hover:-translate-y-1 
                         group font-golos"
                     >
-                        <Share2 className="w-4 h-4 group-hover:rotate-12 transition-transform duration-300" />
+                        <Share2 className="w-3 h-3 sm:w-4 sm:h-4 group-hover:rotate-12 transition-transform duration-300" />
                         <span className="group-hover:tracking-wide transition-all duration-300">
                             Share with Friends
                         </span>
@@ -194,30 +185,30 @@ const StreamingLinksModal = ({
                             transition={{ delay: 0.1 * index }}
                         >
                             <Link href={platform.link} target="_blank" rel="noopener noreferrer">
-                                <div className="bg-black/50 hover:bg-white/10 rounded-[4px] p-4 
+                                <div className="bg-black/50 hover:bg-white/10 rounded-[4px] p-3 sm:p-4 
                                 transition-all duration-300 border border-white/10 hover:scale-105 
                                 transform hover:-translate-y-1">
                                     <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-4">
+                                        <div className="flex items-center gap-2 sm:gap-4">
                                             <Image
                                                 src={platform.icon}
-                                                width={44}
-                                                height={44}
+                                                width={32}
+                                                height={32}
                                                 alt={`${platform.name} logo`}
-                                                className="object-contain rounded-full"
+                                                className="object-contain rounded-full w-8 h-8 sm:w-11 sm:h-11"
                                             />
-                                            <span className="text-white font-medium text-lg">{platform.name}</span>
+                                            <span className="text-white font-medium text-sm sm:text-lg">{platform.name}</span>
                                         </div>
-                                        <Button className="rounded-[4px] text-[#101010] text-[16px] 
+                                        <Button className="rounded-[4px] text-[#101010] text-xs sm:text-base 
                                         bg-gradient-to-r from-white to-gray-100 font-[600] tracking-wide 
-                                        border-none shadow-lg hover:shadow-white/10">
+                                        border-none shadow-lg hover:shadow-white/10 px-2 py-1 sm:px-4 sm:py-2">
                                             Listen Now
                                         </Button>
                                     </div>
                                 </div>
                             </Link>
                             {index < streamingPlatforms.length - 1 && (
-                                <Separator className="my-4 bg-white/10" />
+                                <Separator className="my-3 sm:my-4 bg-white/10" />
                             )}
                         </motion.div>
                     ))}
