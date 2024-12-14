@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { useEffect, useState, memo } from "react"
 import { motion } from "framer-motion";
 import { IconType } from 'react-icons';
+import StreamingLinksModal from './StreamingLinksModal';
 
 const carouselImages = [
   "/asap-1.jpg",
@@ -54,7 +55,7 @@ const PAGE_SOCIAL_LINKS: SocialLink[] = [
 
 // Update the share functionality to use the main website URL
 const MAIN_WEBSITE_URL = 'https://www.asap.uvise.media';
-const STREAM_URL = 'https://www.submithub.com/link/meekturna-asap';
+
 
 const CarouselImage = memo(({ image, index, currentIndex }: {
   image: string;
@@ -323,23 +324,10 @@ export default function MusicPromo() {
         <ChevronDown className="w-8 h-8 text-white animate-bounce" />
       </div>
 
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
-          <div className="relative w-[450px] h-[600px] bg-white rounded-lg">
-            <button
-              onClick={() => setIsModalOpen(false)}
-              className="absolute -top-10 right-0 text-white hover:text-gray-300"
-            >
-              Close
-            </button>
-            <iframe
-              src={STREAM_URL}
-              className="w-full h-full rounded-lg"
-              allow="autoplay"
-            />
-          </div>
-        </div>
-      )}
+      <StreamingLinksModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   )
 }
